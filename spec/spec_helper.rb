@@ -5,6 +5,14 @@ require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environ
 require 'spec/autorun'
 require 'spec/rails'
 
+#added these until next # for webrat
+require "webrat"
+
+Webrat.configure do |config|
+  config.mode = :rails
+end
+#end of webrat - see last section of code in addition to this for webrat
+
 # Uncomment the next line to use webrat's matchers
 #require 'webrat/integrations/rspec-rails'
 
@@ -51,4 +59,22 @@ Spec::Runner.configure do |config|
   # == Notes
   #
   # For more information take a look at Spec::Runner::Configuration and Spec::Runner
+end
+
+#the code below is added to use webrat in spec/integration tests
+module Spec::Rails::Example
+  class IntegrationExampleGroup < ActionController::IntegrationTest
+
+   def initialize(defined_description, options={}, &implementation)
+     defined_description.instance_eval do
+       def to_s
+         self
+       end
+     end
+     
+     super(defined_description)
+   end
+
+    Spec::Example::ExampleGroupFactory.register(:integration, self)
+  end
 end
